@@ -62,7 +62,7 @@ public class MyUtils {
                         "id INT NOT NULL AUTO_INCREMENT, " +
                         "projectName VARCHAR(20) NOT NULL, " +
                         "PRIMARY KEY (id), " +
-                        "directionId INT, " +
+                        "directionId INT NOT NULL, " +
                         "FOREIGN KEY (directionId) REFERENCES Directions(id));"
         );
     }
@@ -72,16 +72,18 @@ public class MyUtils {
                 "CREATE TABLE Employee (" +
                         "id INT NOT NULL AUTO_INCREMENT, " +
                         "firstName VARCHAR(20) NOT NULL, " +
+                        "PRIMARY KEY (id), " +
                         "roleId INT NOT NULL, " +
                         "projectId INT NOT NULL, " +
-                        "PRIMARY KEY (id), " +
                         "FOREIGN KEY (roleId) REFERENCES Roles(id), " +
                         "FOREIGN KEY (projectId) REFERENCES Projects(id));"
         );
     }
 
     public void dropTable(String tableName) throws SQLException {
-        statement.execute("DROP TABLE " + tableName + ";");
+        statement.execute(
+                "DROP TABLE " + tableName + ";"
+        );
     }
 
     public void insertTableRoles(String roleName) throws SQLException {
@@ -117,7 +119,8 @@ public class MyUtils {
 
     public int getRoleId(String roleName) throws SQLException {
         try(ResultSet resultSet = statement.executeQuery(
-                "SELECT id FROM Roles WHERE roleName='" + roleName + "';")){
+                "SELECT id FROM Roles WHERE roleName='" + roleName + "';"
+        )){
             return resultSet.next()
                     ? resultSet.getInt(1)
                     : -1;
@@ -126,7 +129,8 @@ public class MyUtils {
 
     public int getDirectionId(String directionName) throws SQLException {
         try(ResultSet resultSet = statement.executeQuery(
-                "SELECT id FROM Directions WHERE directionName='" + directionName + "';")){
+                "SELECT id FROM Directions WHERE directionName='" + directionName + "';"
+        )){
             return resultSet.next()
                     ? resultSet.getInt(1)
                     : -1;
@@ -135,7 +139,8 @@ public class MyUtils {
 
     public int getProjectId(String projectName) throws SQLException {
         try(ResultSet resultSet = statement.executeQuery(
-                "SELECT id FROM Projects WHERE projectName='" + projectName + "';")){
+                "SELECT id FROM Projects WHERE projectName='" + projectName + "';"
+        )){
             return resultSet.next()
                     ? resultSet.getInt(1)
                     : -1;
@@ -144,7 +149,8 @@ public class MyUtils {
 
     public int getEmployeeId(String firstName) throws SQLException {
         try(ResultSet resultSet = statement.executeQuery(
-                "SELECT id FROM Employee WHERE firstName='" + firstName + "';")){
+                "SELECT id FROM Employee WHERE firstName='" + firstName + "';"
+        )){
             return resultSet.next()
                     ? resultSet.getInt(1)
                     : -1;
@@ -152,67 +158,77 @@ public class MyUtils {
     }
 
     public List<String> getAllRoles() throws SQLException {
-        try(ResultSet resultSet = statement.executeQuery("SELECT * FROM roles;")){
+        try(ResultSet resultSet = statement.executeQuery(
+                "SELECT roleName FROM roles;"
+        )){
             return new ArrayList<String>(){{
-                while (resultSet.next()) add(resultSet.getString("roleName"));
+                while (resultSet.next()) add(resultSet.getString(1));
             }};
         }
     }
 
     public List<String> getAllDirestion() throws SQLException {
-        try(ResultSet resultSet = statement.executeQuery("SELECT * FROM directions;")){
+        try(ResultSet resultSet = statement.executeQuery(
+                "SELECT directionName FROM directions;"
+        )){
             return new ArrayList<String>(){{
-                while (resultSet.next()) add(resultSet.getString("directionName"));
+                while (resultSet.next()) add(resultSet.getString(1));
             }};
         }
     }
 
     public List<String> getAllProjects() throws SQLException {
-        try(ResultSet resultSet = statement.executeQuery("SELECT * FROM projects;")){
+        try(ResultSet resultSet = statement.executeQuery(
+                "SELECT projectName FROM projects;"
+        )){
             return new ArrayList<String>(){{
-                while (resultSet.next()) add(resultSet.getString("projectName"));
+                while (resultSet.next()) add(resultSet.getString(1));
             }};
         }
     }
 
     public List<String> getAllEmployee() throws SQLException {
-        try(ResultSet resultSet = statement.executeQuery("SELECT * FROM employee;")){
+        try(ResultSet resultSet = statement.executeQuery(
+                "SELECT firstName FROM employee;"
+        )){
             return new ArrayList<String>(){{
-                while (resultSet.next()) add(resultSet.getString("firstName"));
+                while (resultSet.next()) add(resultSet.getString(1));
             }};
         }
     }
 
     public List<String> getAllDevelopers() throws SQLException {
         try(ResultSet resultSet = statement.executeQuery(
-                    "SELECT firstName "
-                            + "FROM Employee INNER JOIN Roles ON Employee.roleId = Roles.id "
-                            + "WHERE Roles.roleName='Developer';")){
+                "SELECT firstName " +
+                        "FROM Employee INNER JOIN Roles ON Employee.roleId = Roles.id " +
+                        "WHERE Roles.roleName='Developer';"
+        )){
             return new ArrayList<String>(){{
-                while (resultSet.next()) add(resultSet.getString("firstName"));
+                while (resultSet.next()) add(resultSet.getString(1));
             }};
         }
     }
 
     public List<String> getAllJavaProjects() throws SQLException {
         try(ResultSet resultSet = statement.executeQuery(
-                "SELECT projectName "
-                        + "FROM Projects "
-                        + "INNER JOIN "
-                        + "Directions ON Projects.directionId = Directions.id "
-                        + "WHERE Directions.directionName='Java';")){
+                "SELECT projectName " +
+                        "FROM Projects INNER JOIN Directions ON Projects.directionId = Directions.id " +
+                        "WHERE Directions.directionName='Java';"
+        )){
             return new ArrayList<String>(){{
-                while (resultSet.next()) add(resultSet.getString("projectName"));
+                while (resultSet.next()) add(resultSet.getString(1));
             }};
         }
     }
 
     public List<String> getAllJavaDevelopers() throws SQLException {
         try(ResultSet resultSet = statement.executeQuery(
-                "SELECT Employee.firstName FROM (((Employee INNER JOIN Roles ON Employee.roleId = Roles.id)"
-                        +" INNER JOIN Projects ON Employee.projectId = Projects.id)"
-                        +" INNER JOIN Directions ON Projects.directionId = Directions.id)"
-                        +" WHERE Roles.roleName='Developer'and Directions.directionName='Java';")){
+                "SELECT Employee.firstName " +
+                        "FROM (((Employee INNER JOIN Roles ON Employee.roleId = Roles.id) " +
+                        "INNER JOIN Projects ON Employee.projectId = Projects.id) " +
+                        "INNER JOIN Directions ON Projects.directionId = Directions.id) " +
+                        "WHERE Roles.roleName='Developer' and Directions.directionName='Java';"
+        )){
             return new ArrayList<String>(){{
                 while (resultSet.next()) add(resultSet.getString(1));
             }};

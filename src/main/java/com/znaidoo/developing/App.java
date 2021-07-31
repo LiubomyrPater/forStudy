@@ -10,8 +10,9 @@ public class App
         try {
             m.createConnection();
             m.createStatement();
-            m.createSchema("inMemory");
-            m.useSchema();
+            //m.createSchema("inMemory");
+            // m.useSchema();
+
             m.createTableRoles();
             m.createTableDirections();
             m.createTableProjects();
@@ -20,6 +21,7 @@ public class App
             m.insertTableRoles("Developer");
             m.insertTableRoles("DevOps");
             m.insertTableRoles("QC");
+
             m.insertTableDirections("Java");
             m.insertTableDirections("Python");
             m.insertTableDirections(".Net");
@@ -38,7 +40,7 @@ public class App
             m.insertTableEmployee("Olya", "QC", "Sun");
             m.insertTableEmployee("Maria", "QC", "Mars");
 
-            List<String> dev = m.getAllDevelopers();
+            List<String> dev = m.getAllJavaDevelopers();
             for (String s : dev) {
                 System.out.println(s);
             }
